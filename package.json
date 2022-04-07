@@ -1,0 +1,13 @@
+{
+  "name": "samuraibs-tests",
+  "version": "1.0.0",
+  "description": "Acceptance tests project - E2E in Cypress",
+  "main": "index.js",
+  "author": "Thaiana Quadros",
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "^6.0.0",
+    "cypress": "^9.5.1",
+    "pg": "^8.7.3"
+  }
+}
