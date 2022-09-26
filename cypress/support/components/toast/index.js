@@ -1,10 +1,13 @@
 import { el } from './elements'
+
 class Toast {
-    shouldHaveText(expectedText) {
-        cy.get(el.toast)
-            .should('be.visible')
-            .find('p')
-            .should('have.text', expectedText)
-    }
+  shouldHaveText(expectText) {
+    cy.get(el.toast, { timeout: 10000 })
+      .should('be.visible')
+      //.should('have.css', 'opacity', '1')
+      .find('p')
+      .should('have.text', expectText)
+  }
 }
+
 export default new Toast()

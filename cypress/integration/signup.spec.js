@@ -3,15 +3,19 @@ import signupPage from '../support/pages/signup'
 
 describe('cadastro', function () {
 
+    before(function(){
+        cy.fixture('signup.json').then(function(signup){ //colocar .json eh opicional
+            this.success = signup.success
+            this.email_dup = signup.email_dup
+            this.email_inv = signup.email_inv
+            this.short_password = signup.short_password
+        })
+    })
+
     context('quando o usuario e novato', function () {
-        //definindo a massa de testes
-        const user = {
-            name: 'Fernando Papito',
-            email: 'papito@samuraibs.com',
-            password: 'pwd123'
-        }
+
         before(function () { //removendo o usuario para que a massa seja sempre valida
-            cy.task('removeUser', user.email)
+            cy.task('removeUser', this.success.email)
                 .then(function (result) {
                     console.log(result)
                 })
@@ -19,7 +23,7 @@ describe('cadastro', function () {
         it('deve cadastrar com sucesso', function () {
 
             signupPage.go()
-            signupPage.form(user)
+            signupPage.form(this.success)
             signupPage.submit()
             cy.wait(2000)
             signupPage.toast.shouldHaveText('Agora você se tornou um(a) Samurai, faça seu login para ver seus agendamentos!')
@@ -28,31 +32,15 @@ describe('cadastro', function () {
     })
 
     context('quando o email ja existe', function () {
-        const user = {
-            name: 'Joao Lucas',
-            email: 'joao@samuraibs.com',
-            password: 'pwd123',
-            is_provider: true
-        }
-        before(function () {
-            cy.task('removeUser', user.email)
-                .then(function (result) {
-                    console.log(result)
-                })
 
-            cy.request(
-                'POST',
-                'http://localhost:3333/users',
-                user
-            ).then(function (response) {
-                expect(response.status).to.eq(200)
-            })
+        before(function () {
+            cy.postUser(this.email_dup)
         })
 
         it('nao deve cadastra o usuario', function () {
 
             signupPage.go()
-            signupPage.form(user)
+            signupPage.form(this.email_dup)
             signupPage.submit()
             cy.wait(2000)
             signupPage.toast.shouldHaveText('Email já cadastrado para outro usuário.')
@@ -60,16 +48,12 @@ describe('cadastro', function () {
     })
 
     context('quando o email e incorreto', function () {
-        const user = {
-            name: 'Elizabeth Olsen',
-            email: 'liza.yahoo.com',
-            password: 'pwd123'
-        }
+
         it('deve exibir mesagem de alerta', function () {
             signupPage.go()
-            signupPage.form(user)
+            signupPage.form(this.email_inv)
             signupPage.submit()
-            signupPage.alertHaveText('Informe um email válido')
+            signupPage.alert.haveText('Informe um email válido')
 
         })
     })
@@ -84,18 +68,16 @@ describe('cadastro', function () {
 
         passwords.forEach(function (p) {
             it('nao deve cadastrar com a senha: ' + p, function () {
-                const user = {
-                    name: 'Jason Friday',
-                    email: 'jason@gmail.com',
-                    password: p
-                }
-                signupPage.form(user)
+
+                this.short_password.password = p
+
+                signupPage.form(this.short_password)
                 signupPage.submit()
             })
         })
 
         afterEach(function () {
-            signupPage.alertHaveText('Pelo menos 6 caracteres')
+            signupPage.alert.haveText('Pelo menos 6 caracteres')
         })
     })
 
@@ -112,7 +94,7 @@ describe('cadastro', function () {
 
         alertMessages.forEach(function (alert) {
             it('deve exibir ' + alert.toLowerCase(), function () {
-                signupPage.alertHaveText(alert)
+                signupPage.alert.haveText(alert)
             })
         })
     })
