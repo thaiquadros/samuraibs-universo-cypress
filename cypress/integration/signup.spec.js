@@ -9,6 +9,7 @@ describe('cadastro', function () {
             this.email_dup = signup.email_dup
             this.email_inv = signup.email_inv
             this.short_password = signup.short_password
+            //test
         })
     })
 
