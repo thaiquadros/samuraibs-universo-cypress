@@ -26,15 +26,16 @@ describe('resgate de senha', function () {
         })
     })
 
-    context('quando o usuario solicita o resgate', function(){
+    context('quando o usuario solicita o resgate', function () {
 
         before(function () {
             cy.postUser(this.data)
             cy.recoveryPass(this.data.email)
         })
 
-        it('deve poder cadastrar uma nova senha', function(){
-            console.log('teste')
+        it('deve poder cadastrar uma nova senha', function () {
+
+            console.log(Cypress.env('recoveryToken'))
         })
     })
 })
